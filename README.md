@@ -6,6 +6,7 @@ Google Apps Script that appends a JSON object to a spreadsheet as columns, suita
 
 - runs entirely within your Google Apps domain
 - automatically creates new columns if new data fields appear in the JSON body
+- always adds a `received_at` column to mark when data was received by the script 
 
 ## setup
 
