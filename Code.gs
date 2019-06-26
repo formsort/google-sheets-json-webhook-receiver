@@ -10,6 +10,15 @@ function doPost(e) {
   
   var headerMap = getExistingKeyColMap(sheet);
   var values = JSON.parse(e.postData.contents);
+  var answers = values["answers"];
+  if (typeof answers === "object") {
+    Object.keys(answers)
+      .forEach(function(answerLabel) {
+        values[answerLabel] = answers[answerLabel];
+      });
+    delete values["answers"];
+  }
+
   values['received_at'] = new Date();
   updateKeyColMap(sheet, headerMap, values);
   writeValuesWithHeaderMap(sheet, headerMap, values);
