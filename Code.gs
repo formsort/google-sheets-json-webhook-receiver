@@ -2,9 +2,6 @@ var SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/.../edit';
 
 
 function doPost(e) {
-  Logger.log(e.postData.type);
-  Logger.log(e.postData.contents);
-  
   var ss = SpreadsheetApp.openByUrl(SPREADSHEET_URL);
   var sheet = ss.getSheets()[0];
   
