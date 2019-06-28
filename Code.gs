@@ -1,11 +1,21 @@
 var SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/.../edit';
-
+var SLACK_URL = 'https://hooks.slack.com/services/...';
 
 function doPost(e) {
-  var ss = SpreadsheetApp.openByUrl(SPREADSHEET_URL);
-  var sheet = ss.getSheets()[0];
+  var values = getValues(e);
   
-  var headerMap = getExistingKeyColMap(sheet);
+  if (SPREADSHEET_URL) {
+    handleSpreadsheet(values, SPREADSHEET_URL);
+  }
+  
+  if (SLACK_URL) {
+    handleSlack(values, SLACK_URL);
+  }
+  
+  return ContentService.createTextOutput('OK');
+}
+
+function getValues(e) {
   var values = JSON.parse(e.postData.contents);
   var answers = values["answers"];
   if (typeof answers === "object") {
@@ -15,12 +25,16 @@ function doPost(e) {
       });
     delete values["answers"];
   }
-
   values['received_at'] = new Date();
+  return values;
+}
+
+function handleSpreadsheet(values, spreadsheetUrl) {
+  var ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
+  var sheet = ss.getSheets()[0];
+  var headerMap = getExistingKeyColMap(sheet);
   updateKeyColMap(sheet, headerMap, values);
   writeValuesWithHeaderMap(sheet, headerMap, values);
-  
-  return ContentService.createTextOutput('OK');
 }
 
 
@@ -65,11 +79,34 @@ function writeValuesWithHeaderMap(sheet, headerMap, values) {
   });
 }
 
+function handleSlack(values, slackUrl) {
+  var text = Object.keys(values).map(function(key) {
+    var value = values[key];
+    return key +': \t*' + value + '*';
+  }).join('\n');
+  
+  var payload = JSON.stringify({
+    text: text
+  });
+
+  var headers = {
+    "Accept":"application/json", 
+    "Content-Type":"application/json"
+  };
+
+  var options = {
+    "method":"POST",
+    "headers": headers,
+    "payload": payload
+  };
+  var response = UrlFetchApp.fetch(slackUrl, options);
+}
+
 function test() {
   doPost({
     postData: {
       type: "application/json",
-      contents: '{ "name": "Test" }',
+      contents: '{ "hello": "world" }',
     }
   })
 }
