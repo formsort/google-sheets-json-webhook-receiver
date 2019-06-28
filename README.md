@@ -1,4 +1,4 @@
-# formsort json webhook receiver
+# google sheets / slack json webhook receiver
 
 Google Apps Script that appends a JSON object to a Google Sheets spreadsheet as columns, suitable for use as a [formsort](https://formsort.com) webhook integration.
 

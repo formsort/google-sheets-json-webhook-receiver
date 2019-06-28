@@ -80,13 +80,27 @@ function writeValuesWithHeaderMap(sheet, headerMap, values) {
 }
 
 function handleSlack(values, slackUrl) {
-  var text = Object.keys(values).map(function(key) {
+  var fields = []
+  
+  var text = Object.keys(values).forEach(function(key) {
     var value = values[key];
-    return key +': \t*' + value + '*';
-  }).join('\n');
+    fields.push({
+      "type": "mrkdwn",
+      "text": key
+    }, {
+      "type": "mrkdwn",
+      "text": "*" + value + "*"
+    });
+  });
   
   var payload = JSON.stringify({
-    text: text
+    text: "New submission!",
+    blocks: [
+	  {
+		"type": "section",
+		"fields": fields
+      }
+    ]
   });
 
   var headers = {
