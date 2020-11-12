@@ -21,7 +21,8 @@ function getValues(e) {
   if (typeof answers === "object") {
     Object.keys(answers)
       .forEach(function(answerLabel) {
-        values[answerLabel] = answers[answerLabel];
+        var answer = answers[answerLabel];
+        values[answerLabel] = answer != null ? answer.toString() : answer;
       });
     delete values["answers"];
   }
